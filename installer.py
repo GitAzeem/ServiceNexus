@@ -7,22 +7,19 @@ def install():
     item = item_var.get()
     root_password = password_var.get()
 
-    # Check if Jenkins is selected
+    # Check if Jenkins or Docker is selected
     if item == "jenkins":
-        # Construct the command for Jenkins installation
         command = ["bash", "jenkins-installation.sh"]
-
-        # Use echo to pass the password to sudo
-        full_command = f'echo {root_password} | sudo -S ' + ' '.join(command)
-
+    elif item == "docker":
+        command = ["bash", "docker-installation.sh"]
     else:
-        # Construct the command for other services
         command = ["bash", "install_service.sh", os_variant, item]
-        full_command = f'echo {root_password} | sudo -S ' + ' '.join(command)
+
+    # Use echo to pass the password to sudo
+    full_command = f'echo {root_password} | sudo -S ' + ' '.join(command)
 
     # Execute the command
     try:
-        # Run the command in a subprocess
         subprocess.run(full_command, shell=True, check=True, text=True)
         result_label.config(text=f"{item.capitalize()} installation successful!")
     except subprocess.CalledProcessError:
@@ -45,7 +42,7 @@ item_label = tk.Label(root, text="Service Name")
 item_label.grid(column=1, row=0)
 item_var = tk.StringVar()
 item_dropdown = ttk.Combobox(root, textvariable=item_var)
-item_dropdown['values'] = ("nginx", "apache", "git", "vim", "jenkins")  # Added Jenkins
+item_dropdown['values'] = ("nginx", "apache", "git", "vim", "jenkins", "docker")  # Added Docker
 item_dropdown.grid(column=1, row=1)
 
 # Password Entry
@@ -65,4 +62,3 @@ result_label.grid(column=0, row=2, columnspan=4)
 
 # Start the GUI
 root.mainloop()
-
